@@ -2,6 +2,7 @@
 config.py
 配置文件
 """
+
 # 豆瓣top250的url
 BASE_URL = "https://movie.douban.com/top250"
 
@@ -9,6 +10,9 @@ BASE_URL = "https://movie.douban.com/top250"
 # 一共10页, 每一页25个电影
 TOTAL_ITEMS: int = 250
 PAGE_SIZE = 25
+# 豆瓣的每一页不是按第1页, 第2页...来区分的, 而是通过start参数来区分的
+# 就是第一面是start=0, 第二页是start=25, 第三页是start=50...以此类推
+START = [_ for _ in range(0, TOTAL_ITEMS, PAGE_SIZE)]  # [0, 25, 50, ..., 225]
 
 # 请求头
 HEADERS: dict[str, str] = {
@@ -23,7 +27,7 @@ HEADERS: dict[str, str] = {
     "Sec-Fetch-Mode": "cors",
     "Sec-Fetch-Site": "same-origin",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
-  }
+}
 
 # 超时时间
 REQUEST_TIMEOUT: int = 15
@@ -48,15 +52,15 @@ CSV_ENCODING: str = "utf-8-sig"
 
 # CSV 列顺序（建议固定，便于后续分析）
 CSV_FIELDS: list[str] = [
-    "rank",        # 排名
-    "title",       # 片名
+    "rank",  # 排名
+    "title",  # 片名
     "isPlayable",  # 是否可播放
-    "Director",    # 导演
-    "Actor",       # 演员
-    "ReleaseYear", # 上映年份
-    "Country",     # 国家
-    "rating",      # 评分
-    "votes",       # 评价人数
+    "Director",  # 导演
+    "Actor",  # 演员
+    "ReleaseYear",  # 上映年份
+    "Country",  # 国家
+    "rating",  # 评分
+    "votes",  # 评价人数
     "detail_url",  # 详情页链接
-    "quote",       # 短评（可能为空）
+    "quote",  # 短评（可能为空）
 ]
