@@ -1,19 +1,19 @@
-from typing import Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+
 
 @dataclass
 class Movie:
-    rank: int                      # 排名
-    title: str                     # 片名
-    Director: list[str]            # 导演
-    Actor: list[str]               # 演员
-    ReleaseYear: str               # 上映年份
-    Country: list[str]             # 国家
-    rating: float                  # 评分
-    votes: int                     # 评价人数
-    detail_url: str                # 详情页链接
-    quote: Optional[str] = None    # 短评, 可能为空
-    isPlayable: bool = False       # 是否可播放
+    rank: int  # 排名
+    title: str  # 片名
+    Director: list[str]  # 导演
+    Actor: list[str]  # 演员
+    ReleaseYear: str  # 上映年份
+    Country: list[str]  # 国家
+    rating: float  # 评分
+    votes: int  # 评价人数
+    detail_url: str  # 详情页链接
+    quote: str | None = None  # 短评, 可能为空
+    isPlayable: bool = False  # 是否可播放
 
     def to_dict(self) -> dict:
         """把Movie对象转换成字典, 方便序列化和存储"""
@@ -47,5 +47,3 @@ class Movie:
             detail_url=data["detail_url"],
             quote=str(data.get("quote", "")),
         )
-    
-
