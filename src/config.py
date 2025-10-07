@@ -3,6 +3,16 @@ config.py
 配置文件
 """
 
+from pathlib import Path
+
+# 输出文件路径
+ROOT = Path(__file__).resolve().parents[1]
+
+OUTPUT_DIR = ROOT / "outputs"
+CSV_FILE_PATH = OUTPUT_DIR / "douban_top250.csv"
+JSON_FILE_PATH = OUTPUT_DIR / "douban_top250.json"
+
+
 # 豆瓣top250的url
 BASE_URL = "https://movie.douban.com/top250"
 
