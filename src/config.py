@@ -56,7 +56,7 @@ SLEEP_MAX_SECONDS: float = 2.5
 
 # 解析和存储
 # HTML解析
-PARSER: str = "lxml"
+PARSER: str = "html.parser"
 # CSV 编码：utf-8-sig 可让 Windows Excel 打开中文更友好
 CSV_ENCODING: str = "utf-8-sig"
 

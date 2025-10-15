@@ -7,8 +7,8 @@ import re
 
 from bs4 import BeautifulSoup
 
-import config
-from models import Movie
+from src import config
+from src.models import Movie
 
 
 class Parser:

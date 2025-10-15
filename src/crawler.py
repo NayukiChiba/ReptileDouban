@@ -8,7 +8,7 @@ import time
 
 import requests
 
-import config
+from src import config
 
 
 class Crawler:
