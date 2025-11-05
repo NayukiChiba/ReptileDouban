@@ -30,11 +30,15 @@ class Crawler:
             str - 页面HTML文本
         """
         params = {"start": start}
+        page_no = start // config.PAGE_SIZE + 1
         # 重试机制
         last_error: Exception | None = None
         # 总尝试次数 = 1（初始请求） + MAX_RETRIES（重试次数）
         for attempt in range(config.MAX_RETRIES + 1):
             try:
+                print(
+                    f"[Crawler] 正在请求第 {page_no} 页（start={start}），尝试 {attempt + 1}"
+                )
                 # 发送GET请求
                 resp = self.session.get(
                     config.BASE_URL,
@@ -44,9 +48,11 @@ class Crawler:
                 # 非2xx状态码视为失败
                 resp.raise_for_status()
                 resp.encoding = resp.apparent_encoding  # 自动检测编码, 避免乱码
+                print(f"[Crawler] 第 {page_no} 页请求成功")
                 return resp.text
             except requests.RequestException as e:
                 last_error = e
+                print(f"[Crawler] 第 {page_no} 页请求失败: {e}")
                 # 如果还有重试机会, 指数退避 + 随机等待
                 if attempt < config.MAX_RETRIES:
                     wait_time = config.RETRY_BACKOFF_BASE * (
@@ -54,6 +60,7 @@ class Crawler:
                     ) + random.uniform(
                         config.SLEEP_MIN_SECONDS, config.SLEEP_MAX_SECONDS
                     )
+                    print(f"[Crawler] {wait_time:.2f}s 后重试第 {page_no} 页")
                     time.sleep(wait_time)
                     continue
 
@@ -72,12 +79,15 @@ class Crawler:
 
         for start in config.START:
             try:
+                page_no = start // config.PAGE_SIZE + 1
+                print(f"[Crawler] ===== 开始爬取第 {page_no} 页 =====")
                 html = self.fetch_page(start)
                 pages_html.append(html)
                 # 限速一下, 避免过快请求触发风控
                 delay = random.uniform(
                     config.SLEEP_MIN_SECONDS, config.SLEEP_MAX_SECONDS
                 )
+                print(f"[Crawler] 第 {page_no} 页完成，休眠 {delay:.2f}s")
                 time.sleep(delay)  # 请求间随机等待, 模拟人类行为
             except Exception as e:
                 print(f"错误: 无法获取start={start}的页面, 错误信息: {e}")
