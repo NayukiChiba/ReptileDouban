@@ -96,6 +96,7 @@ class Parser:
         """
         soup = BeautifulSoup(html, config.PARSER)
         items = soup.select("ol.grid_view li")
+        print(f"[Parser] 当前页面解析到 {len(items)} 个电影节点")
 
         movies: list[Movie] = []
         for item in items:
@@ -118,11 +119,15 @@ class Parser:
                 rating = 0.0
 
             # 5) 评价人数（从 "xxxx人评价" 提取）
-            star_text = self._safe_text(item.select_one("div.star"), sep=" ")
+            # 豆瓣当前结构通常是 div.bd 下“紧邻评分的 div”，不一定带 class="star"
+            star_node = item.select_one("div.bd > div") or item.select_one("div.star")
+            star_text = self._safe_text(star_node, sep=" ")
             votes = self._extract_votes(star_text)
 
             # 6) 短评（可能没有）
-            quote = self._safe_text(item.select_one("span.inq")) or None
+            # 豆瓣当前结构通常是 p.quote > span，不一定带 class="inq"
+            quote_node = item.select_one("p.quote span") or item.select_one("span.inq")
+            quote = self._safe_text(quote_node) or None
 
             # 7) 可播放标记（若页面存在可播放标记）
             is_playable = bool(item.select_one("span.playable"))
@@ -152,12 +157,15 @@ class Parser:
                     isPlayable=is_playable,
                 )
             )
+            print(f"[Parser] 正在解析电影：#{rank} {title}")
 
         return movies
 
     def parse_pages(self, pages_html: list[str]) -> list[Movie]:
         """解析多页 HTML 并合并结果。"""
         all_movies: list[Movie] = []
-        for html in pages_html:
+        for idx, html in enumerate(pages_html, start=1):
+            print(f"[Parser] ===== 开始解析第 {idx} 页 =====")
             all_movies.extend(self.parse_page(html))
+            print(f"[Parser] 第 {idx} 页解析完成，累计 {len(all_movies)} 条")
         return all_movies
