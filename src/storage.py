@@ -65,8 +65,10 @@ class Storage:
         Returns:
             Path: 实际保存路径
         """
-        path = file_path or config.CSV_FILE_PATH
-        path.mkdir(parents=True, exist_ok=True)
+        # 这里要使用 JSON 路径，而不是 CSV 路径
+        path = file_path or config.JSON_FILE_PATH
+        # mkdir 应该作用于父目录，不能对文件路径本身调用
+        path.parent.mkdir(parents=True, exist_ok=True)
 
         # 把数据从Movie变成dict
         data = [movie.to_dict() for movie in movies]
